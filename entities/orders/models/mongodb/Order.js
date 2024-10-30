@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-const Address = require("../../../../helpers/mongodb/Address");
+const { default: mongoose } = require("mongoose");
 const { PHONE } = require("../../../../helpers/mongodb/mongooseValidators");
+const Address = require("../../../../helpers/mongodb/Address");
 
 const orderSchema = new mongoose.Schema({
     customer_id: {
@@ -19,13 +19,10 @@ const orderSchema = new mongoose.Schema({
             required: true
         }
     }],
-    productsInOrder: {
-        type: Number,
-        required: true
-    },
-    quantityInOrder: {
-        type: Number,
-        required: true
+    status: {
+        type: String,
+        enum: ['Pending', 'In Progress', 'Completed'],
+        default: 'Pending'
     },
     createdAt: {
         type: Date,
@@ -33,6 +30,6 @@ const orderSchema = new mongoose.Schema({
     },
 });
 
-const Order = mongoose.model("Order", orderSchema);
+const Order = mongoose.model("orders", orderSchema);
 
 module.exports = Order;
