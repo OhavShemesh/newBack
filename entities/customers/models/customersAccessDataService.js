@@ -106,5 +106,32 @@ const updateBusiness = async (id) => {
         throw error;
     }
 };
+const updateOrders = async (customerId, orderId) => {
+    try {
 
-module.exports = { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness }
+        const customer = await Customer.findById(customerId);
+        if (!customer) {
+            const error = new Error(
+                "A customer with this ID cannot be found in the database"
+            );
+            error.status = 404;
+            return console.log("Mongoose", error);
+        }
+
+        const orderIndex = customer.orders.indexOf(orderId);
+
+        if (orderIndex > -1) {
+            customer.orders.splice(orderIndex, 1);
+        } else {
+            customer.orders.push(orderId);
+        }
+
+        await customer.save();
+        return customer
+    } catch (error) {
+        console.log("Mongoose", error);
+        throw error;
+    }
+};
+
+module.exports = { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, updateOrders }

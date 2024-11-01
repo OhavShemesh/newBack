@@ -36,6 +36,7 @@ const getProductById = async (id) => {
 const updateProduct = async (id, details) => {
     try {
         let product = await Product.findByIdAndUpdate(id, details)
+        product = await product.save()
         return product
 
     } catch (err) {
@@ -53,5 +54,29 @@ const deleteProduct = async (id) => {
 
     }
 }
+const updateInStock = async (id, newStock) => {
+    try {
+        let product = await Product.findById(id)
+        product.inStock = newStock
+        product = await product.save()
+        return product
 
-module.exports = { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct }
+    } catch (err) {
+        return createError("Mongoose", err);
+
+    }
+}
+const updateStockAfterOrder = async (id, subFromStock) => {
+    try {
+        let product = await Product.findById(id)
+        product.inStock = product.inStock - subFromStock
+        product = await product.save()
+        return product
+
+    } catch (err) {
+        return createError("Mongoose", err);
+
+    }
+}
+
+module.exports = { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct, updateInStock, updateStockAfterOrder }

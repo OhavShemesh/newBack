@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 const { handleError } = require("../../../utils/handleErrors");
-const { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct } = require("../models/productsAccessDataService");
+const { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct, updateInStock, updateStockAfterOrder } = require("../models/productsAccessDataService");
 
 
 router.post("/", async (req, res) => {
@@ -61,6 +61,30 @@ router.delete("/:id", async (req, res) => {
         res.send(product)
     } catch (err) {
         req.errorMessage = err.message || "Something is wrong with the data or server connection";
+        return handleError(res, err.status || 400, req.errorMessage);
+
+    }
+})
+router.patch("/updateInStock", async (req, res) => {
+    try {
+        const { id } = req.body;
+        const { newStock } = req.body
+        let product = await updateInStock(id, newStock)
+        res.send(product)
+    } catch (err) {
+        req.errorMessage = err.message || "Something is wrong with updating the stock";
+        return handleError(res, err.status || 400, req.errorMessage);
+
+    }
+})
+router.patch("/updateStockAfterOrder", async (req, res) => {
+    try {
+        const { id } = req.body;
+        const { subFromStock } = req.body
+        let product = await updateStockAfterOrder(id, subFromStock)
+        res.send(product)
+    } catch (err) {
+        req.errorMessage = err.message || "Something is wrong with updating the stock";
         return handleError(res, err.status || 400, req.errorMessage);
 
     }
