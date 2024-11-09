@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Image = require("../../../../helpers/mongodb/Image");
 const Name = require("../../../../helpers/mongodb/Name");
-const { PHONE, EMAIL } = require("../../../../helpers/mongodb/mongooseValidators");
+const { PHONE, EMAIL, DEFAULT_VALIDATION } = require("../../../../helpers/mongodb/mongooseValidators");
 const Address = require("../../../../helpers/mongodb/Address");
 
 const customerSchema = new mongoose.Schema({
@@ -34,6 +34,15 @@ const customerSchema = new mongoose.Schema({
     orders: {
         type: [String]
     },
+    messages: [{
+        message: {
+            type: String,
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
+    }],
     isBusiness: {
         type: Boolean,
         default: false

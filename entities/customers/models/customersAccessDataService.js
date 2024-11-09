@@ -1,6 +1,8 @@
 const { generateAuthToken } = require("../../../auth/providers/jwt");
 const { generateUserPassword, comaprePasswords } = require("../helpers/bcrypt");
 const Customer = require("./mongodb/Customer")
+const chalk = require("chalk");
+
 
 
 const registerCustomer = async (customerDetails) => {
@@ -108,7 +110,6 @@ const updateBusiness = async (id) => {
 };
 const updateOrders = async (customerId, orderId) => {
     try {
-
         const customer = await Customer.findById(customerId);
         if (!customer) {
             const error = new Error(
@@ -133,5 +134,53 @@ const updateOrders = async (customerId, orderId) => {
         throw error;
     }
 };
+const sendContactMessage = async (message, customerId) => {
+    try {
+        const customer = await Customer.findById(customerId);
+        if (!customer) {
+            const error = new Error(
+                "A customer with this ID cannot be found in the database"
+            );
+            error.status = 404;
+            return console.log("Mongoose", error);
+        }
+        customer.messages.push({ message: message })
+        await customer.save()
+        return customer
 
-module.exports = { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, updateOrders }
+    } catch (error) {
+        console.log("Mongoose", error);
+        throw error;
+    }
+}
+const deleteContactMessage = async (message, customerId) => {
+    try {
+        const customer = await Customer.findById(customerId);
+        if (!customer) {
+            const error = new Error("A customer with this ID cannot be found in the database");
+            error.status = 404;
+            return console.log("Mongoose", error);
+        }
+
+        const messageIndex = customer.messages.findIndex(
+            (msg) => msg.message === message
+        );
+
+        if (messageIndex === -1) {
+            const error = new Error("Message not found in customer's messages");
+            error.status = 404;
+            return console.log("Mongoose", error);
+        }
+
+        customer.messages.splice(messageIndex, 1);
+        await customer.save();
+
+        return customer;
+
+    } catch (error) {
+        console.log("Mongoose", error);
+        throw error;
+    }
+};
+
+module.exports = { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, updateOrders, sendContactMessage, deleteContactMessage }

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { handleError } = require("../../../utils/handleErrors");
-const { placeOrder, getAllOrders, getOrderById, updateOrderStatus } = require("../models/ordersAccessDataService");
+const { placeOrder, getAllOrders, getOrderById, updateOrderStatus, deleteOrder } = require("../models/ordersAccessDataService");
 const { updateOrders } = require("../../customers/models/customersAccessDataService");
 
 router.post("/", async (req, res) => {
@@ -52,7 +52,18 @@ router.patch("/updateOrders", async (req, res) => {
 router.get("/:id", async (req, res) => {
     try {
         const { id } = req.params
-        let order = getOrderById(id)
+        let order = await getOrderById(id)
+        res.send(order)
+    } catch (err) {
+        req.errorMessage = err.message || "Failed fetching order"
+        return handleError(res, err.status || 400, req.errorMessage);
+
+    }
+})
+router.delete("/:id", async (req, res) => {
+    try {
+        const { id } = req.params
+        let order = deleteOrder(id)
         res.send(order)
     } catch (err) {
         req.errorMessage = err.message || "Failed fetching order"

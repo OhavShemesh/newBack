@@ -52,6 +52,25 @@ const updateOrderStatus = async (id, newStatus) => {
     }
 };
 
+const deleteOrder = async (id) => {
+    try {
+
+        const order = await Order.findByIdAndDelete(id);
+        if (!order) {
+            const error = new Error(
+                "A order with this ID cannot be found in the database"
+            );
+            error.status = 404;
+            return console.log("Mongoose", error);
+        }
+
+        return order
+    } catch (error) {
+        console.log("Mongoose", error);
+        throw error;
+    }
+};
 
 
-module.exports = { placeOrder, getAllOrders, getOrderById, updateOrderStatus }
+
+module.exports = { placeOrder, getAllOrders, getOrderById, updateOrderStatus, deleteOrder }

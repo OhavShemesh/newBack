@@ -1,8 +1,10 @@
 const express = require("express");
 
 const router = express.Router();
-const { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness } = require("../models/customersAccessDataService");
+const { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, sendContactMessage, deleteContactMessage } = require("../models/customersAccessDataService");
 const { handleError } = require("../../../utils/handleErrors");
+const chalk = require("chalk");
+const { transporter } = require("../../emailHandler/emailFunctions");
 
 
 router.post("/", async (req, res) => {
@@ -63,6 +65,50 @@ router.patch("/updateBusiness", async (req, res) => {
         console.log(err);
     }
 });
+router.patch("/contactMessage", async (req, res) => {
+    try {
+        const { customerId } = req.body;
+        const { message } = req.body;
+
+        const customer = await sendContactMessage(message, customerId);
+        res.send(customer);
+    } catch (err) {
+        console.log(err);
+    }
+});
+router.patch("/deleteMessage", async (req, res) => {
+    try {
+        const { customerId } = req.body;
+        const { message } = req.body;
+
+        const customer = await deleteContactMessage(message, customerId);
+        res.send(customer);
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+
+router.post("/sendMail", async (req, res) => {
+    const { recipient, subject, body } = req.body;
+
+    const mailOptions = {
+        from: "your-email@gmail.com",
+        to: recipient,
+        subject: subject,
+        text: body,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log(chalk.red(error));
+
+            return res.status(500).send("Error sending email");
+        }
+        res.status(200).send("Email sent successfully");
+    });
+});
+
 
 router.patch("/:customerId", async (req, res) => {
     try {
@@ -74,6 +120,7 @@ router.patch("/:customerId", async (req, res) => {
         console.log(err);
     }
 });
+
 
 
 
