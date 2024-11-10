@@ -49,6 +49,9 @@ const customerSchema = new mongoose.Schema({
             default: Date.now
         }
     }],
+    likes: {
+        type:[String]
+    },
     isBusiness: {
         type: Boolean,
         default: false

@@ -182,5 +182,31 @@ const deleteContactMessage = async (message, customerId) => {
         throw error;
     }
 };
+const likeProduct = async (productId, customerId) => {
+    try {
+        const customer = await Customer.findById(customerId);
+        if (!customer) {
+            const error = new Error("A customer with this ID cannot be found in the database");
+            error.status = 404;
+            return console.log("Mongoose", error);
+        }
 
-module.exports = { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, updateOrders, sendContactMessage, deleteContactMessage }
+        const productIndex = customer.likes.indexOf(productId);
+
+        if (productIndex === -1) {
+            customer.likes.push(productId);
+        } else {
+            customer.likes.splice(productIndex, 1);
+        }
+
+        await customer.save();
+
+        return customer;
+
+    } catch (error) {
+        console.log("Mongoose", error);
+        throw error;
+    }
+};
+
+module.exports = { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, updateOrders, sendContactMessage, deleteContactMessage, likeProduct }

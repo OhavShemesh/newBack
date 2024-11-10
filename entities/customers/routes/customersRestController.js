@@ -1,7 +1,7 @@
 const express = require("express");
 
 const router = express.Router();
-const { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, sendContactMessage, deleteContactMessage } = require("../models/customersAccessDataService");
+const { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, sendContactMessage, deleteContactMessage, likeProduct } = require("../models/customersAccessDataService");
 const { handleError } = require("../../../utils/handleErrors");
 const chalk = require("chalk");
 const { transporter } = require("../emailHandler/emailFunctions");
@@ -82,6 +82,17 @@ router.patch("/deleteMessage", async (req, res) => {
         const { message } = req.body;
 
         const customer = await deleteContactMessage(message, customerId);
+        res.send(customer);
+    } catch (err) {
+        console.log(err);
+    }
+});
+router.patch("/likeProduct", async (req, res) => {
+    try {
+        const { customerId } = req.body;
+        const { productId } = req.body;
+
+        const customer = await likeProduct(productId, customerId);
         res.send(customer);
     } catch (err) {
         console.log(err);
