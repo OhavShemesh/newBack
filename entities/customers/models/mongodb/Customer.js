@@ -5,6 +5,12 @@ const { PHONE, EMAIL, DEFAULT_VALIDATION } = require("../../../../helpers/mongod
 const Address = require("../../../../helpers/mongodb/Address");
 
 const customerSchema = new mongoose.Schema({
+    _id: {
+        type: mongoose.Schema.Types.ObjectId,
+        default: function () {
+            return new mongoose.Types.ObjectId();
+        }
+    },
     name: Name,
     phone: PHONE,
     email: EMAIL,
@@ -47,10 +53,6 @@ const customerSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    isAdmin: {
-        type: Boolean,
-        default: false
-    }
 });
 
 const Customer = mongoose.model("customers", customerSchema);

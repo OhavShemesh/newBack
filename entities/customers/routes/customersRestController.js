@@ -4,7 +4,7 @@ const router = express.Router();
 const { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, sendContactMessage, deleteContactMessage } = require("../models/customersAccessDataService");
 const { handleError } = require("../../../utils/handleErrors");
 const chalk = require("chalk");
-const { transporter } = require("../../emailHandler/emailFunctions");
+const { transporter } = require("../emailHandler/emailFunctions");
 
 
 router.post("/", async (req, res) => {

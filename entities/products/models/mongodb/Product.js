@@ -3,6 +3,12 @@ const Image = require("../../../../helpers/mongodb/Image");
 const { DEFAULT_VALIDATION, URL } = require("../../../../helpers/mongodb/mongooseValidators");
 
 const productsSchema = new mongoose.Schema({
+    _id: {
+        type: mongoose.Schema.Types.ObjectId,
+        default: function () {
+            return new mongoose.Types.ObjectId();
+        }
+    },
     name: DEFAULT_VALIDATION,
     description: DEFAULT_VALIDATION,
     price: {

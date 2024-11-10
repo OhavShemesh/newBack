@@ -4,6 +4,9 @@ require("dotenv").config();
 const connectToDb = require("./DB/dbService");
 const router = require("./routes/router");
 const corsMiddleware = require("./middlewares/cors");
+const addInitialCustomers = require("./initialEntities/initialCustomers");
+const addInitialOrders = require("./initialEntities/initialOrders");
+const addInitialProducts = require("./initialEntities/initialProducts");
 
 const app = express();
 const PORT = process.env.PORT || 8181;
@@ -15,5 +18,8 @@ app.use(router);
 
 app.listen(PORT, () => {
     console.log(chalk.yellow("app is listening to port " + PORT));
+    addInitialProducts()
+    addInitialCustomers()
+    addInitialOrders()
     connectToDb();
 });

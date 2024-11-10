@@ -14,6 +14,7 @@ const Name = new mongoose.Schema({
     },
   },
   last: DEFAULT_VALIDATION,
+  _id: false
 });
 
 module.exports = Name;

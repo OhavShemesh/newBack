@@ -21,25 +21,25 @@ const registerCustomer = async (customerDetails) => {
 }
 
 const loginCustomer = async (email, password) => {
-    console.log(password);
-
     try {
         const findCustomer = await Customer.findOne({ email })
+
 
         if (!findCustomer) {
             const error = new Error("Invalid email or password");
             error.status = 401;
-            return error
+            return false
         }
 
         if (!comaprePasswords(password, findCustomer.password)) {
             const error = new Error("Invalid email or password");
             error.status = 401;
-            return error
+            return false
         }
 
 
         let token = generateAuthToken(findCustomer)
+
         return token
 
     } catch (err) {

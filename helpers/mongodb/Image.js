@@ -10,7 +10,9 @@ const Image = new mongoose.Schema({
     ...DEFAULT_VALIDATION,
     required: false,
     default: "User Image"
-  }
+  },
+  _id: false
+
 });
 
 module.exports = Image;

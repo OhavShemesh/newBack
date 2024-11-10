@@ -13,6 +13,8 @@ const Address = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  _id: false
+
 });
 
 module.exports = Address;
