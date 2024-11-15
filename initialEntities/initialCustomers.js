@@ -29,8 +29,8 @@ const initialCustomersData = [
     {
         "_id": "6730a9f4e281caf51816c399",
         "name": {
-            "first": "reqular",
-            "last": "reqular",
+            "first": "regular",
+            "last": "regular",
         },
         "phone": "0545555555",
         "email": "regular@email.com",

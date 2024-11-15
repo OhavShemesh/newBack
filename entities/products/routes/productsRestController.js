@@ -3,10 +3,21 @@ const express = require("express");
 const router = express.Router();
 const { handleError } = require("../../../utils/handleErrors");
 const { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct, updateInStock, updateStockAfterOrder } = require("../models/productsAccessDataService");
+const auth = require("../../../auth/authService");
 
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
     try {
+        const userInfo = req.user;
+
+        if (!userInfo.isBusiness) {
+            return handleError(
+                res,
+                403,
+                "Authorization Error: Only business customers can create new products"
+            );
+        }
+
         let product = await createProduct(req.body)
         res.send(product)
 
@@ -40,10 +51,19 @@ router.get("/:id", async (req, res) => {
     }
 })
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
     try {
         const { id } = req.params;
         let changes = req.body
+        const userInfo = req.user;
+
+        if (!userInfo.isBusiness) {
+            return handleError(
+                res,
+                403,
+                "Authorization Error: Only business customers can update products"
+            );
+        }
 
 
         let product = await updateProduct(id, changes)
@@ -54,9 +74,19 @@ router.put("/:id", async (req, res) => {
 
     }
 })
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
     try {
         const { id } = req.params;
+        const userInfo = req.user;
+
+        if (!userInfo.isBusiness) {
+            return handleError(
+                res,
+                403,
+                "Authorization Error: Only business customers can delete products"
+            );
+        }
+
         let product = await deleteProduct(id)
         res.send(product)
     } catch (err) {
@@ -65,10 +95,21 @@ router.delete("/:id", async (req, res) => {
 
     }
 })
-router.patch("/updateInStock", async (req, res) => {
+router.patch("/updateInStock", auth, async (req, res) => {
     try {
         const { id } = req.body;
         const { newStock } = req.body
+        const userInfo = req.user;
+
+
+        if (!userInfo.isBusiness) {
+            return handleError(
+                res,
+                403,
+                "Authorization Error: Only business customers can update products stock"
+            );
+        }
+
         let product = await updateInStock(id, newStock)
         res.send(product)
     } catch (err) {

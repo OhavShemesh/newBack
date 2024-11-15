@@ -5,6 +5,7 @@ const { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addTo
 const { handleError } = require("../../../utils/handleErrors");
 const chalk = require("chalk");
 const { transporter } = require("../emailHandler/emailFunctions");
+const auth = require("../../../auth/authService");
 
 
 router.post("/", async (req, res) => {
@@ -31,8 +32,17 @@ router.post("/login", async (req, res) => {
 
     }
 })
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
     try {
+        const userInfo = req.user;
+        if (!userInfo.isBusiness) {
+            return handleError(
+                res,
+                403,
+                "Authorization Error: Only business customers can get all users info"
+            );
+        }
+
         const AllCustomers = await getAllCustomers()
         res.send(AllCustomers)
 
@@ -43,9 +53,21 @@ router.get("/", async (req, res) => {
     }
 })
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
     try {
         const { id } = req.params;
+        const userInfo = req.user;
+
+
+        if (userInfo._id !== id && !userInfo.isBusiness) {
+            return handleError(
+                res,
+                403,
+                "Authorization Error: Only the same customer or business customer can get customer info"
+            );
+        }
+
+
         const customer = await getCustomerById(id)
         res.send(customer)
     } catch (err) {
@@ -54,10 +76,21 @@ router.get("/:id", async (req, res) => {
     }
 })
 
-router.patch("/updateBusiness", async (req, res) => {
+router.patch("/updateBusiness", auth, async (req, res) => {
     try {
+
         const { customerId } = req.body;
-        console.log("customerId", customerId);
+        const userInfo = req.user;
+
+
+        if (userInfo._id !== customerId && !userInfo.isBusiness) {
+            return handleError(
+                res,
+                403,
+                "Authorization Error: Only the same customer or business customer can get customer info"
+            );
+        }
+
 
         const customer = await updateBusiness(customerId);
         res.send(customer);
@@ -76,10 +109,20 @@ router.patch("/contactMessage", async (req, res) => {
         console.log(err);
     }
 });
-router.patch("/deleteMessage", async (req, res) => {
+router.patch("/deleteMessage", auth, async (req, res) => {
     try {
         const { customerId } = req.body;
         const { message } = req.body;
+        const userInfo = req.user;
+
+        if (!userInfo.isBusiness) {
+            return handleError(
+                res,
+                403,
+                "Authorization Error: Only business customers can get all users info"
+            );
+        }
+
 
         const customer = await deleteContactMessage(message, customerId);
         res.send(customer);
@@ -112,8 +155,6 @@ router.post("/sendMail", async (req, res) => {
 
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-            console.log(chalk.red(error));
-
             return res.status(500).send("Error sending email");
         }
         res.status(200).send("Email sent successfully");
