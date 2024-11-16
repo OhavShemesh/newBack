@@ -1,7 +1,7 @@
 const express = require("express");
 
 const router = express.Router();
-const { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, sendContactMessage, deleteContactMessage, likeProduct } = require("../models/customersAccessDataService");
+const { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, sendContactMessage, deleteContactMessage, likeProduct, updateCustomer } = require("../models/customersAccessDataService");
 const { handleError } = require("../../../utils/handleErrors");
 const chalk = require("chalk");
 const { transporter } = require("../emailHandler/emailFunctions");
@@ -70,6 +70,29 @@ router.get("/:id", auth, async (req, res) => {
 
         const customer = await getCustomerById(id)
         res.send(customer)
+    } catch (err) {
+        console.log(err);
+
+    }
+})
+
+router.put("/updateCustomer", auth, async (req, res) => {
+    try {
+        const { id } = req.body
+        const infoAfterChange = req.body
+
+        const userInfo = req.user
+
+        if (userInfo._id !== id && !userInfo.isBusiness) {
+            return handleError(
+                res,
+                403,
+                "Authorization Error: Only the same customer or business customer can update customer details"
+            );
+        }
+        const customer = await updateCustomer(id, infoAfterChange)
+        res.send(customer)
+
     } catch (err) {
         console.log(err);
 

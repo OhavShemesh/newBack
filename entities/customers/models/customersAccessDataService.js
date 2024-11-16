@@ -67,6 +67,22 @@ const getCustomerById = async (id) => {
 
     }
 }
+
+const updateCustomer = async (id, infoAfterChange) => {
+    try {
+        console.log("infoAfterChange", infoAfterChange);
+
+        const customer = await Customer.findById(id);
+        customer.updateOne(infoAfterChange)
+        await customer.save()
+
+        return customer
+    } catch (err) {
+        console.log(err);
+
+    }
+}
+
 const addToCart = async (id, itemToCart) => {
     try {
         const customer = await Customer.findById(id);
@@ -209,4 +225,4 @@ const likeProduct = async (productId, customerId) => {
     }
 };
 
-module.exports = { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, updateOrders, sendContactMessage, deleteContactMessage, likeProduct }
+module.exports = { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, updateOrders, sendContactMessage, deleteContactMessage, likeProduct, updateCustomer }
