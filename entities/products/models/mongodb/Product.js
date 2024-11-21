@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Image = require("../../../../helpers/mongodb/Image");
 const { DEFAULT_VALIDATION, URL } = require("../../../../helpers/mongodb/mongooseValidators");
 
 const productsSchema = new mongoose.Schema({

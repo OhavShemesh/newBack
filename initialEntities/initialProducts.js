@@ -1,4 +1,4 @@
-const Product = require("../entities/products/models/mongodb/product");
+const Product = require("../entities/products/models/mongodb/Product");
 const { createProduct } = require("../entities/products/models/productsAccessDataService");
 
 const initialProductsData = [

@@ -1,12 +1,9 @@
 const express = require("express");
-
 const router = express.Router();
 const { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, sendContactMessage, deleteContactMessage, likeProduct, updateCustomer, deleteOrderFromCustomer } = require("../models/customersAccessDataService");
 const { handleError } = require("../../../utils/handleErrors");
-const chalk = require("chalk");
 const { transporter } = require("../emailHandler/emailFunctions");
 const auth = require("../../../auth/authService");
-const Customer = require("../models/mongodb/Customer");
 
 
 router.post("/", async (req, res) => {
