@@ -1,5 +1,5 @@
 const { createError } = require("../../../utils/handleErrors");
-const Product = require("./mongodb/product");
+const Product = require("./mongodb/Product");
 
 const createProduct = async (productDetails) => {
     try {
