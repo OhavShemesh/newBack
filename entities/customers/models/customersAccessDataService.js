@@ -70,18 +70,18 @@ const getCustomerById = async (id) => {
 
 const updateCustomer = async (id, infoAfterChange) => {
     try {
-        console.log("infoAfterChange", infoAfterChange);
-
-        const customer = await Customer.findById(id);
-        customer.updateOne(infoAfterChange)
+        const customer = await Customer.findByIdAndUpdate(
+            id,
+            infoAfterChange,
+            { new: true, runValidators: true }
+        );
         await customer.save()
-
-        return customer
-    } catch (err) {
-        console.log(err);
-
+        return customer;
+    } catch (error) {
+        console.log("Mongoose", error);
+        throw error;
     }
-}
+};
 
 const addToCart = async (id, itemToCart) => {
     try {
@@ -225,4 +225,22 @@ const likeProduct = async (productId, customerId) => {
     }
 };
 
-module.exports = { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, updateOrders, sendContactMessage, deleteContactMessage, likeProduct, updateCustomer }
+const deleteOrderFromCustomer = async (customerId, orderId) => {
+    try {
+        let customer = await Customer.findById(customerId);
+
+        const orderIndex = customer.orders.findIndex(order => order.toString() === orderId.toString());
+
+        if (orderIndex !== -1) {
+            customer.orders.splice(orderIndex, 1);
+            await customer.save();
+        } else {
+            console.log('Order not found');
+        }
+    } catch (err) {
+        console.log("Mongoose", error);
+        throw error;
+    }
+};
+
+module.exports = { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, updateOrders, sendContactMessage, deleteContactMessage, likeProduct, updateCustomer, deleteOrderFromCustomer }

@@ -1,11 +1,12 @@
 const express = require("express");
 
 const router = express.Router();
-const { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, sendContactMessage, deleteContactMessage, likeProduct, updateCustomer } = require("../models/customersAccessDataService");
+const { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, sendContactMessage, deleteContactMessage, likeProduct, updateCustomer, deleteOrderFromCustomer } = require("../models/customersAccessDataService");
 const { handleError } = require("../../../utils/handleErrors");
 const chalk = require("chalk");
 const { transporter } = require("../emailHandler/emailFunctions");
 const auth = require("../../../auth/authService");
+const Customer = require("../models/mongodb/Customer");
 
 
 router.post("/", async (req, res) => {
@@ -76,28 +77,30 @@ router.get("/:id", auth, async (req, res) => {
     }
 })
 
+
 router.put("/updateCustomer", auth, async (req, res) => {
     try {
-        const { id } = req.body
-        const infoAfterChange = req.body
+        const { id, infoAfterChange } = req.body;
 
-        const userInfo = req.user
+
+        const userInfo = req.user;
 
         if (userInfo._id !== id && !userInfo.isBusiness) {
             return handleError(
                 res,
                 403,
-                "Authorization Error: Only the same customer or business customer can update customer details"
+                "Authorization Error: Only the same customer or business customer can get customer info"
             );
         }
-        const customer = await updateCustomer(id, infoAfterChange)
-        res.send(customer)
 
+
+        const customer = await updateCustomer(id, infoAfterChange);
+        res.send(customer);
     } catch (err) {
-        console.log(err);
-
+        console.error("Error in router.put /updateCustomer:", err.message);
+        res.status(500).send({ error: "Internal Server Error" });
     }
-})
+});
 
 router.patch("/updateBusiness", auth, async (req, res) => {
     try {
@@ -184,6 +187,27 @@ router.post("/sendMail", async (req, res) => {
     });
 });
 
+router.patch("/deleteOrderFromCustomer", auth, async (req, res) => {
+    try {
+        const { orderId } = req.body;
+        const { customerId } = req.body;
+
+        const userInfo = req.user;
+
+        if (userInfo._id !== customerId && !userInfo.isBusiness) {
+            return handleError(
+                res,
+                403,
+                "Authorization Error: Only the same customer or business customer can delete order"
+            );
+        }
+
+        const customer = await deleteOrderFromCustomer(customerId, orderId)
+        res.send(customer);
+    } catch (err) {
+        console.log(err);
+    }
+});
 
 router.patch("/:customerId", async (req, res) => {
     try {
@@ -195,6 +219,8 @@ router.patch("/:customerId", async (req, res) => {
         console.log(err);
     }
 });
+
+
 
 
 
