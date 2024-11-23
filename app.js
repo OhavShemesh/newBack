@@ -16,10 +16,10 @@ app.use(express.json());
 
 app.use(router);
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(chalk.yellow("app is listening to port " + PORT));
-    addInitialProducts()
-    addInitialCustomers()
-    addInitialOrders()
-    connectToDb();
+    await connectToDb();
+    await addInitialProducts()
+    await addInitialCustomers()
+    await addInitialOrders()
 });

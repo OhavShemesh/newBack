@@ -1,7 +1,10 @@
 {
-  "TOKEN_GENERATOR": "jwt",
-  "LOGGER": "morgan",
-  "VALIDATOR": "joi",
-  "DB": "mongodb",
-  "ENVIRONMENT": "production"
+  "DB": {
+    "URI": "mongodb+srv://OhavShemesh:JlRml1QCAuSxiBn9@mystoreserver.agqp8.mongodb.net/?retryWrites=true&w=majority&appName=MyStoreServer"
+  },
+  "ENVIRONMENT": "production",
+  "SERVER": {
+    "HOST": "0.0.0.0",
+    "PORT": 8080
+  }
 }

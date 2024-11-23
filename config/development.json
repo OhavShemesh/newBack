@@ -1,7 +1,10 @@
 {
-  "TOKEN_GENERATOR": "jwt",
-  "LOGGER": "morgan",
-  "VALIDATOR": "joi",
-  "DB": "mongodb",
-  "ENVIRONMENT": "production"
+  "DB": {
+    "URI": "mongodb://localhost:27017/MyStore"
+  },
+  "ENVIRONMENT": "development",
+  "SERVER": {
+    "HOST": "localhost",
+    "PORT": 8181
+  }
 }

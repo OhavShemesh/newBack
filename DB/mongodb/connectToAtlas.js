@@ -3,7 +3,7 @@ require("dotenv").config();
 
 const connectToAtlasDb = async () => {
   try {
-    await mongoose.connect("mongodb+srv://OhavShemesh:ITITeDyIghiECLO5@mystoreserver.agqp8.mongodb.net/MyStoreServer?retryWrites=true&w=majority");
+    await mongoose.connect("mongodb+srv://OhavShemesh:JlRml1QCAuSxiBn9@mystoreserver.agqp8.mongodb.net/?retryWrites=true&w=majority&appName=MyStoreServer");
     console.log("Connected to MongoDB in atlas");
   } catch (error) {
     console.error("Could not connect to MongoDB", error);
