@@ -1,10 +1,10 @@
 const connectToLocalDb = require("./mongodb/connectToMongodbLocally");
 const connectToAtlasDb = require("./mongodb/connectToAtlas");
+require("dotenv").config();
 
-const config = require("config");
-console.log(config);
+const config = require(`../config/${process.env.NODE_ENV.trim()}`);
 
-const ENVIRONMENT = config.get("ENVIRONMENT");
+const ENVIRONMENT = config.ENVIRONMENT;
 console.log(ENVIRONMENT);
 
 

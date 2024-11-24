@@ -1,0 +1,17 @@
+{
+  "image": {
+    "url": "https://gf.com",
+    "alt": "ds"
+  },
+  "_id": "67432ca2ffd5630f25e94b26",
+  "name": "computer",
+  "description": "dsdsdsdsds",
+  "price": 414,
+  "inStock": 42421,
+  "category": "Furniture",
+  "createdAt": "2024-11-24T13:39:46.162Z",
+  "__v": 0
+}
+{
+  "DeletedAt": "24/11/24 15:40:45"
+}

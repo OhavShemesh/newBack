@@ -1,0 +1,19 @@
+{
+  "customer_id": "6730a9f4e281caf51816c395",
+  "phone": "0545555555",
+  "address": {
+    "city": "business city",
+    "street": "business street",
+    "houseNumber": 1,
+    "zip": 10000
+  },
+  "productsAndQuantity": [
+    {
+      "id": "66fffb5b850e9d483d870941",
+      "quantity": 1
+    }
+  ]
+}
+{
+  "LastLogin": "24/11/24 16:40:53"
+}

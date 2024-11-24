@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Image = require("../../../../helpers/mongodb/Image");
 const Name = require("../../../../helpers/mongodb/Name");
-const { PHONE, EMAIL, DEFAULT_VALIDATION } = require("../../../../helpers/mongodb/mongooseValidators");
+const { PHONE, EMAIL } = require("../../../../helpers/mongodb/mongooseValidators");
 const Address = require("../../../../helpers/mongodb/Address");
 
 const customerSchema = new mongoose.Schema({
@@ -50,7 +50,7 @@ const customerSchema = new mongoose.Schema({
         }
     }],
     likes: {
-        type:[String]
+        type: [String]
     },
     isBusiness: {
         type: Boolean,

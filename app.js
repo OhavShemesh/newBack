@@ -1,6 +1,8 @@
 const express = require("express");
 const chalk = require("chalk");
 require("dotenv").config();
+const fs = require("fs")
+const path = require("path")
 const connectToDb = require("./DB/dbService");
 const router = require("./routes/router");
 const corsMiddleware = require("./middlewares/cors");
@@ -17,9 +19,10 @@ app.use(express.json());
 app.use(router);
 
 app.listen(PORT, async () => {
-    console.log(chalk.yellow("app is listening to port " + PORT));
+    console.log(chalk.yellow("App is listening on port " + PORT));
+    fs.mkdirSync('logs', { recursive: true });
     await connectToDb();
-    await addInitialProducts()
-    await addInitialCustomers()
-    await addInitialOrders()
+    await addInitialProducts();
+    await addInitialCustomers();
+    await addInitialOrders();
 });

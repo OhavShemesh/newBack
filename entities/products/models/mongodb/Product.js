@@ -8,7 +8,7 @@ const productsSchema = new mongoose.Schema({
             return new mongoose.Types.ObjectId();
         }
     },
-    name: DEFAULT_VALIDATION,
+    name: { ...DEFAULT_VALIDATION, unique: true },
     description: DEFAULT_VALIDATION,
     price: {
         type: Number,

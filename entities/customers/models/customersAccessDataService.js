@@ -2,7 +2,8 @@ const { generateAuthToken } = require("../../../auth/providers/jwt");
 const { generateUserPassword, comaprePasswords } = require("../helpers/bcrypt");
 const Customer = require("./mongodb/Customer")
 const chalk = require("chalk");
-
+const fs = require("fs")
+const path = require("path")
 
 
 const registerCustomer = async (customerDetails) => {
@@ -13,6 +14,13 @@ const registerCustomer = async (customerDetails) => {
         const email = customerDetails.email
         let customerFromDB = await Customer.findOne({ email })
         let token = generateAuthToken(customerFromDB)
+
+        const logsFolderPath = path.resolve(__dirname, '../../../logs/customers');
+        const registrationFolderPath = path.join(logsFolderPath, 'registration');
+        const registrationFilePath = path.join(registrationFolderPath, `NewUser - ${customerDetails?.email}.txt`);
+        fs.mkdirSync(registrationFolderPath, { recursive: true });
+        fs.writeFileSync(registrationFilePath, JSON.stringify(customerDetails, null, 2));
+
         return token
     } catch (err) {
         console.log(err);
@@ -39,6 +47,27 @@ const loginCustomer = async (email, password) => {
 
 
         let token = generateAuthToken(findCustomer)
+
+        const logsFolderPath = path.resolve(__dirname, '../../../logs/customers');
+        const loginsFolderPath = path.join(logsFolderPath, 'logins');
+        const loginsFilePath = path.join(loginsFolderPath, `${email}.txt`);
+
+        function formatTimestamp(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = String(date.getFullYear()).slice(-2);
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+
+            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const loginTimestamp = { LastLogin: formatTimestamp(new Date()) };
+        fs.mkdirSync(loginsFolderPath, { recursive: true });
+        fs.writeFileSync(loginsFilePath, JSON.stringify(findCustomer, null, 2));
+        fs.appendFileSync(loginsFilePath, `\n${JSON.stringify(loginTimestamp, null, 2)}`);
+
 
         return token
 

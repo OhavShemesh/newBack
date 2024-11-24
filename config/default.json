@@ -5,5 +5,5 @@
   "DB": {
     "TYPE": "mongodb"
   },
-  "ENVIRONMENT": "production"
+  "ENVIRONMENT": "development"
 }
