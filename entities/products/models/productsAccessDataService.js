@@ -1,3 +1,4 @@
+const formatTimestamp = require("../../../helpers/TimeStamp");
 const { createError } = require("../../../utils/handleErrors");
 const Product = require("./mongodb/Product");
 const fs = require("fs")
@@ -11,16 +12,6 @@ const createProduct = async (productDetails) => {
         const logsFolderPath = path.resolve(__dirname, '../../../logs/products');
         const NewProductsFolderPath = path.join(logsFolderPath, 'New Products');
         const NewProductsFilePath = path.join(NewProductsFolderPath, `NewProduct - ${productDetails?.name}.txt`);
-        function formatTimestamp(date) {
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = String(date.getFullYear()).slice(-2);
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
-
-            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-        }
 
         const TimeStamp = { CreatedAt: formatTimestamp(new Date()) }; fs.mkdirSync(NewProductsFolderPath, { recursive: true });
 
@@ -78,16 +69,6 @@ const deleteProduct = async (id) => {
         const logsFolderPath = path.resolve(__dirname, '../../../logs/products');
         const NewProductsFolderPath = path.join(logsFolderPath, 'Deleted Products');
         const NewProductsFilePath = path.join(NewProductsFolderPath, `DeletedProduct - ${product?.name}.txt`);
-        function formatTimestamp(date) {
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = String(date.getFullYear()).slice(-2);
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
-
-            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-        }
 
         const loginTimestamp = { DeletedAt: formatTimestamp(new Date()) }; fs.mkdirSync(NewProductsFolderPath, { recursive: true });
 
@@ -118,17 +99,34 @@ const updateInStock = async (id, newStock) => {
 
     }
 }
+
 const updateStockAfterOrder = async (id, subFromStock) => {
     try {
-        let product = await Product.findById(id)
-        product.inStock = product.inStock - subFromStock
-        product = await product.save()
-        return product
+        let product = await Product.findById(id);
 
+        product.inStock = product.inStock - subFromStock;
+
+        if (product.inStock === 0) {
+            const logsFolderPath = path.resolve(__dirname, '../../../logs/products');
+            const productsOutOfStockFolderPath = path.join(logsFolderPath, 'Products Out Of Stock');
+            const logFilePath = path.join(productsOutOfStockFolderPath, `${product.name}.txt`);
+
+
+            const Timestamp = formatTimestamp(new Date());
+
+            fs.mkdirSync(productsOutOfStockFolderPath, { recursive: true });
+
+            const logMessage = `${Timestamp} - ${product.name} is now out of stock`;
+
+            fs.writeFileSync(logFilePath, logMessage);
+        }
+
+        product = await product.save();
+
+        return product;
     } catch (err) {
         return createError("Mongoose", err);
-
     }
-}
+};
 
 module.exports = { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct, updateInStock, updateStockAfterOrder }

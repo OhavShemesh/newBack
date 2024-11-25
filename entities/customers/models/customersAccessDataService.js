@@ -1,7 +1,8 @@
 const { generateAuthToken } = require("../../../auth/providers/jwt");
+const formatTimestamp = require("../../../helpers/TimeStamp");
 const { generateUserPassword, comaprePasswords } = require("../helpers/bcrypt");
+const { findObjectDifferences } = require("../helpers/findChangesFunction");
 const Customer = require("./mongodb/Customer")
-const chalk = require("chalk");
 const fs = require("fs")
 const path = require("path")
 
@@ -52,16 +53,6 @@ const loginCustomer = async (email, password) => {
         const loginsFolderPath = path.join(logsFolderPath, 'logins');
         const loginsFilePath = path.join(loginsFolderPath, `${email}.txt`);
 
-        function formatTimestamp(date) {
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = String(date.getFullYear()).slice(-2);
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
-
-            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-        }
 
         const loginTimestamp = { LastLogin: formatTimestamp(new Date()) };
         fs.mkdirSync(loginsFolderPath, { recursive: true });
@@ -99,18 +90,41 @@ const getCustomerById = async (id) => {
 
 const updateCustomer = async (id, infoAfterChange) => {
     try {
+        const customerBeforeChange = await Customer.findById(id);
         const customer = await Customer.findByIdAndUpdate(
             id,
             infoAfterChange,
             { new: true, runValidators: true }
         );
-        await customer.save()
+
+        const logsFolderPath = path.resolve(__dirname, '../../../logs/customers');
+        const loginsFolderPath = path.join(logsFolderPath, 'Customers Detail Changes');
+        const loginsFilePath = path.join(loginsFolderPath, `${id}.txt`);
+
+        const Timestamp = formatTimestamp(new Date());
+
+        fs.mkdirSync(loginsFolderPath, { recursive: true });
+
+        const differences = findObjectDifferences(customerBeforeChange, infoAfterChange);
+
+        const logEntries = differences.changes.map(change => {
+            return `${Timestamp} - ${change}`;
+        }).join("\n");
+
+        if (fs.existsSync(loginsFilePath)) {
+            fs.appendFileSync(loginsFilePath, `\n-----------------------------------------------------------------------------------\n${logEntries}\n`);
+        } else {
+            fs.writeFileSync(loginsFilePath, logEntries + "\n");
+        }
+
+        await customer.save();
         return customer;
     } catch (error) {
         console.log("Mongoose", error);
         throw error;
     }
 };
+
 
 const addToCart = async (id, itemToCart) => {
     try {
@@ -147,6 +161,20 @@ const updateBusiness = async (id) => {
 
         await customer.save();
         let token = generateAuthToken(customer)
+
+        const logsFolderPath = path.resolve(__dirname, '../../../logs/customers');
+        const loginsFolderPath = path.join(logsFolderPath, 'Status Changes');
+        const loginsFilePath = path.join(loginsFolderPath, `${id}.txt`);
+
+
+        const Timestamp = formatTimestamp(new Date());
+
+        const logMessage = `${Timestamp} - ${customer.name.first} ${customer.name.middle} ${customer.name.last} status has changed to Business`;
+
+        fs.mkdirSync(loginsFolderPath, { recursive: true });
+
+        fs.writeFileSync(loginsFilePath, logMessage);
+
         return token;
     } catch (error) {
         console.log("Mongoose", error);
