@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, sendContactMessage, deleteContactMessage, likeProduct, updateCustomer, deleteOrderFromCustomer } = require("../models/customersAccessDataService");
+const { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, sendContactMessage, deleteContactMessage, likeProduct, updateCustomer, deleteOrderFromCustomer, getCusotmerByEmail, handleChangePassword } = require("../models/customersAccessDataService");
 const { handleError } = require("../../../utils/handleErrors");
 const { transporter } = require("../emailHandler/emailFunctions");
 const auth = require("../../../auth/authService");
@@ -30,6 +30,22 @@ router.post("/login", async (req, res) => {
 
     }
 })
+
+router.patch("/changePassword", async (req, res) => {
+    try {
+        const { email, newPassword } = req.body;
+
+        const customer = await handleChangePassword(email, newPassword)
+        res.send(customer)
+
+    } catch (err) {
+        req.errorMessage = err.message || "Failed to login";
+        return handleError(res, err.status || 400, req.errorMessage);
+
+    }
+})
+
+
 router.get("/", auth, async (req, res) => {
     try {
         const userInfo = req.user;
@@ -50,6 +66,24 @@ router.get("/", auth, async (req, res) => {
 
     }
 })
+
+
+router.get("/getCustomerByEmail", async (req, res) => {
+    try {
+        const { email } = req.query;
+
+        const customer = await getCusotmerByEmail(email)
+        if (customer) {
+            res.send(customer)
+        }
+        if (!customer) {
+            res.send("Email doesn't exist")
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Server error");
+    }
+});
 
 router.get("/:id", auth, async (req, res) => {
     try {

@@ -68,10 +68,34 @@ const loginCustomer = async (email, password) => {
 
     }
 }
+
+const handleChangePassword = async (email, newPassword) => {
+    try {
+        const customer = await Customer.findOne({ email: email })
+
+        customer.password = generateUserPassword(JSON.stringify(newPassword))
+        customer.save()
+        return customer
+    } catch (err) {
+        console.log(err);
+
+    }
+}
+
 const getAllCustomers = async () => {
     try {
         const customers = await Customer.find()
         return customers
+    } catch (err) {
+        console.log(err);
+
+    }
+}
+
+const getCusotmerByEmail = async (email) => {
+    try {
+        const customer = await Customer.findOne({ email: email });
+        return customer
     } catch (err) {
         console.log(err);
 
@@ -157,7 +181,7 @@ const updateBusiness = async (id) => {
             return console.log("Mongoose", error);
         }
 
-        customer.isBusiness = true
+        customer.isBusiness = !customer.isBusiness;
 
         await customer.save();
         let token = generateAuthToken(customer)
@@ -300,4 +324,5 @@ const deleteOrderFromCustomer = async (customerId, orderId) => {
     }
 };
 
-module.exports = { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, updateOrders, sendContactMessage, deleteContactMessage, likeProduct, updateCustomer, deleteOrderFromCustomer }
+
+module.exports = { registerCustomer, loginCustomer, getAllCustomers, getCustomerById, addToCart, updateBusiness, updateOrders, sendContactMessage, deleteContactMessage, likeProduct, updateCustomer, deleteOrderFromCustomer, getCusotmerByEmail, handleChangePassword }
