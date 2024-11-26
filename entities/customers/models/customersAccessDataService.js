@@ -73,7 +73,7 @@ const handleChangePassword = async (email, newPassword) => {
     try {
         const customer = await Customer.findOne({ email: email })
 
-        customer.password = generateUserPassword(JSON.stringify(newPassword))
+        customer.password = generateUserPassword(newPassword)
         customer.save()
         return customer
     } catch (err) {
