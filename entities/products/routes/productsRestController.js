@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
         res.send(allProducts)
 
     } catch (err) {
-        req.errorMessage = err.message || "Failed to get products";
+        req.errorMessage = err.message || "Failed to get all products";
         return handleError(res, err.status || 400, req.errorMessage);
 
     }
@@ -69,7 +69,7 @@ router.put("/:id", auth, async (req, res) => {
         let product = await updateProduct(id, changes)
         res.send(product)
     } catch (err) {
-        req.errorMessage = err.message || "Something is wrong with the data or server connection";
+        req.errorMessage = err.message || "Failed to update product";
         return handleError(res, err.status || 400, req.errorMessage);
 
     }
@@ -90,7 +90,7 @@ router.delete("/:id", auth, async (req, res) => {
         let product = await deleteProduct(id)
         res.send(product)
     } catch (err) {
-        req.errorMessage = err.message || "Something is wrong with the data or server connection";
+        req.errorMessage = err.message || "Failed deleting product";
         return handleError(res, err.status || 400, req.errorMessage);
 
     }
@@ -113,7 +113,7 @@ router.patch("/updateInStock", auth, async (req, res) => {
         let product = await updateInStock(id, newStock)
         res.send(product)
     } catch (err) {
-        req.errorMessage = err.message || "Something is wrong with updating the stock";
+        req.errorMessage = err.message || "Failed updating stock";
         return handleError(res, err.status || 400, req.errorMessage);
 
     }
@@ -125,7 +125,7 @@ router.patch("/updateStockAfterOrder", async (req, res) => {
         let product = await updateStockAfterOrder(id, subFromStock)
         res.send(product)
     } catch (err) {
-        req.errorMessage = err.message || "Something is wrong with updating the stock";
+        req.errorMessage = err.message || "Failed updating stock";
         return handleError(res, err.status || 400, req.errorMessage);
 
     }

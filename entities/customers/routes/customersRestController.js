@@ -39,7 +39,7 @@ router.patch("/changePassword", async (req, res) => {
         res.send(customer)
 
     } catch (err) {
-        req.errorMessage = err.message || "Failed to login";
+        req.errorMessage = err.message || "Failed changing password";
         return handleError(res, err.status || 400, req.errorMessage);
 
     }
@@ -61,7 +61,7 @@ router.get("/", auth, async (req, res) => {
         res.send(AllCustomers)
 
     } catch (err) {
-        req.errorMessage = err.message || "Failed to login";
+        req.errorMessage = err.message || "Failed fetching all customers";
         return handleError(res, err.status || 400, req.errorMessage);
 
     }
@@ -80,8 +80,8 @@ router.get("/getCustomerByEmail", async (req, res) => {
             res.send("Email doesn't exist")
         }
     } catch (err) {
-        console.log(err);
-        res.status(500).send("Server error");
+        req.errorMessage = err.message || "Failed sending email";
+        return handleError(res, err.status || 400, req.errorMessage);
     }
 });
 
@@ -103,7 +103,8 @@ router.get("/:id", auth, async (req, res) => {
         const customer = await getCustomerById(id)
         res.send(customer)
     } catch (err) {
-        console.log(err);
+        req.errorMessage = err.message || "Failed fetching customer";
+        return handleError(res, err.status || 400, req.errorMessage);
 
     }
 })
@@ -128,8 +129,8 @@ router.put("/updateCustomer", auth, async (req, res) => {
         const customer = await updateCustomer(id, infoAfterChange);
         res.send(customer);
     } catch (err) {
-        console.error("Error in router.put /updateCustomer:", err.message);
-        res.status(500).send({ error: "Internal Server Error" });
+        req.errorMessage = err.message || "Failed updating customer";
+        return handleError(res, err.status || 400, req.errorMessage);
     }
 });
 
@@ -152,7 +153,8 @@ router.patch("/updateBusiness", auth, async (req, res) => {
         const customer = await updateBusiness(customerId);
         res.send(customer);
     } catch (err) {
-        console.log(err);
+        req.errorMessage = err.message || "Failed updating customer status";
+        return handleError(res, err.status || 400, req.errorMessage);
     }
 });
 router.patch("/contactMessage", async (req, res) => {
@@ -184,7 +186,8 @@ router.patch("/deleteMessage", auth, async (req, res) => {
         const customer = await deleteContactMessage(message, customerId);
         res.send(customer);
     } catch (err) {
-        console.log(err);
+        req.errorMessage = err.message || "Failed deleting message";
+        return handleError(res, err.status || 400, req.errorMessage);
     }
 });
 router.patch("/likeProduct", async (req, res) => {
@@ -195,7 +198,8 @@ router.patch("/likeProduct", async (req, res) => {
         const customer = await likeProduct(productId, customerId);
         res.send(customer);
     } catch (err) {
-        console.log(err);
+        req.errorMessage = err.message || "Failed liking product";
+        return handleError(res, err.status || 400, req.errorMessage);
     }
 });
 
@@ -210,14 +214,14 @@ router.post("/sendMail", async (req, res) => {
         text: body,
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            return res.status(500).send("Error sending email");
-        }
+    try {
+        await transporter.sendMail(mailOptions);
         res.status(200).send("Email sent successfully");
-    });
+    } catch (err) {
+        req.errorMessage = err.message || "Failed sending email";
+        return handleError(res, err.status || 400, req.errorMessage);
+    }
 });
-
 router.patch("/deleteOrderFromCustomer", auth, async (req, res) => {
     try {
         const { orderId } = req.body;
@@ -236,7 +240,8 @@ router.patch("/deleteOrderFromCustomer", auth, async (req, res) => {
         const customer = await deleteOrderFromCustomer(customerId, orderId)
         res.send(customer);
     } catch (err) {
-        console.log(err);
+        req.errorMessage = err.message || "Failed deleting order from customer";
+        return handleError(res, err.status || 400, req.errorMessage);
     }
 });
 
@@ -247,7 +252,8 @@ router.patch("/:customerId", async (req, res) => {
         const customer = await addToCart(customerId, itemToCart);
         res.send(customer);
     } catch (err) {
-        console.log(err);
+        req.errorMessage = err.message || "Failed adding to cart";
+        return handleError(res, err.status || 400, req.errorMessage);
     }
 });
 

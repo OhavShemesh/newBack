@@ -53,7 +53,7 @@ router.patch("/updateOrderStatus", auth, async (req, res) => {
         let updatedCustomerWithOrders = await updateOrderStatus(orderId, newStatus)
         res.send(updatedCustomerWithOrders)
     } catch (err) {
-        req.errorMessage = err.message || "Failed fetching order or update order status"
+        req.errorMessage = err.message || "Failed updating order status"
         return handleError(res, err.status || 400, req.errorMessage);
 
     }
@@ -65,7 +65,7 @@ router.patch("/updateOrders", async (req, res) => {
         let updatedCustomerWithOrders = await updateOrders(customerId, orderId)
         res.send(updatedCustomerWithOrders)
     } catch (err) {
-        req.errorMessage = err.message || "Failed fetching customer or saving order id in customer"
+        req.errorMessage = err.message || "Failed updating customer orders"
         return handleError(res, err.status || 400, req.errorMessage);
 
     }
@@ -90,7 +90,7 @@ router.delete("/:id", auth, async (req, res) => {
         let order = deleteOrder(id)
         res.send(order)
     } catch (err) {
-        req.errorMessage = err.message || "Failed fetching order"
+        req.errorMessage = err.message || "Failed deleting order"
         return handleError(res, err.status || 400, req.errorMessage);
 
     }
