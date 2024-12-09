@@ -143,9 +143,9 @@ const updateCustomer = async (id, infoAfterChange) => {
 
         await customer.save();
         return customer;
-    } catch (error) {
-        console.log("Mongoose", error);
-        throw error;
+    } catch (err) {
+        console.log("Mongoose", err);
+        throw err;
     }
 };
 
@@ -319,8 +319,8 @@ const deleteOrderFromCustomer = async (customerId, orderId) => {
             console.log('Order not found');
         }
     } catch (err) {
-        console.log("Mongoose", error);
-        throw error;
+        console.log("Mongoose", err);
+        throw err;
     }
 };
 

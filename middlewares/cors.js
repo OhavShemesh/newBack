@@ -9,7 +9,8 @@ const corsMiddleware = cors({
     "http://localhost:5174",
     "http://192.168.1.148:5173",
     "http://10.244.128.148:5173",
-    "https://newfinalproject-j2rp.onrender.com"
+    "https://newfinalproject-j2rp.onrender.com",
+    "http://192.168.68.100:5173",
   ],
 });
 
