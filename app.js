@@ -1,6 +1,5 @@
 const express = require("express");
 const chalk = require("chalk");
-require("dotenv").config();
 const fs = require("fs")
 const path = require("path")
 const connectToDb = require("./DB/dbService");
@@ -11,7 +10,7 @@ const addInitialOrders = require("./initialEntities/initialOrders");
 const addInitialProducts = require("./initialEntities/initialProducts");
 
 const app = express();
-const PORT = process.env.PORT || 8181;
+const PORT = 8181;
 
 app.use(corsMiddleware);
 app.use(express.json());
